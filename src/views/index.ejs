@@ -1,5 +1,5 @@
 <%- include("partials/header") %> 
-<% var users %> 
+<% var users, member %> 
 <style>
     * {
         box-sizing: border-box !important;
@@ -7,14 +7,20 @@
 </style>
 
 <body>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = new io()
+    </script>
+
     <div class="container vh-100 p-1">
         <div class="row h-100">
             <div class="col-4 border border-right">
                 <h1 class="my-3">Users</h1>
                 <ul class="list-group" id="users_here">
-                    <%= users.forEach(user => { %>
-                        <li><% user.login %> </li>
-                    <% }) %>  
+                    <% users.forEach((user) => { %>
+                        <li class="list-group-item <% if(user.login == member.login){ %> bg-primary text-light<% } %> bg-opacity-75"><a href="/<%= user.login %>"><%= user.login %></a></li> 
+                    <% }) %> 
                 </ul>
             </div>
             <div class="col-8 d-flex flex-column h-100">

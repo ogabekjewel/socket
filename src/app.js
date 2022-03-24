@@ -16,6 +16,20 @@ const server = HTTP.createServer(app)
 // Serverni ishlashiga ta'sir qilmaydi, faqat socketlarni ulanib olishiga yordam beradi
 const io = new Server(server)
 
+
+// socket start --
+
+io.on("connect", (socket) => {
+    console.log(socket.id, "kirdi")
+
+    socket.on("disconnect", (data) => {
+        console.log(socket.id, "chiqdi")
+    })
+})
+
+// socket end --
+
+
 server.listen(PORT, _ => console.log(`SERVER READY AT PORT ${PORT}`))
 
 app.use(Express.json())
