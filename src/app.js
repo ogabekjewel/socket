@@ -6,6 +6,7 @@ const Fs = require("fs")
 const { PORT } = require("../config")
 const CookieParser = require("cookie-parser")
 const mongo = require("./modules/mongo")
+const Morgan = require("morgan")
 
 mongo()
 
@@ -20,21 +21,22 @@ server.listen(PORT, _ => console.log(`SERVER READY AT PORT ${PORT}`))
 app.use(Express.json())
 app.use(Express.urlencoded({ extended: true }))
 app.use(CookieParser())
+app.use(Morgan("tiny"))
 
 // Socket ni frontendga ulash uchun
-app.use("/socket", Express.static(Path.join(__dirname, "..", "node_modules", "client-dist")))
+app.use("/socket", Express.static(Path.join(__dirname, "..", "node_modules", "socket.io", "client-dist")))
 
 app.set("view engine", "ejs")
 app.set("views", Path.join(__dirname, "views"))
 
 Fs.readdir(Path.join(__dirname, "routes"), (err, files) => {
     if(!err) {
-        files.forEach(file => {
+        files.forEach((file) => {
             let routePath = Path.join(__dirname, "routes", file)
             let Route = require(routePath)
             
-            if(Route.path && routePath.router) {
-                app.use(Route.path && routePath.router)
+            if(Route.path && Route.router) {
+                app.use(Route.path, Route.router)
             }
         })
     }
